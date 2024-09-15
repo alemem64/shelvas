@@ -1,12 +1,17 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import TopNav from '@/components/TopNav'
+import Sidebar from '@/components/Sidebar'
+import Toolbar from '@/components/Toolbar'
+import { ZoomProvider } from '../context/ZoomContext';
+import ZoomWrapper from '@/components/ZoomWrapper';
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Shelvas - Online Book Design Program',
-  description: 'Revolutionizing the book industry by substituting Adobe InDesign',
+  title: 'shelvas - Design',
+  description: 'Revolutionizing the book industry',
 }
 
 export default function RootLayout({
@@ -17,27 +22,22 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex flex-col h-screen">
-          <nav className="bg-gray-800 text-white p-4">
-            {/* Top navigation content */}
-            Shelvas
-          </nav>
-          <div className="flex-1 flex">
-            <aside className="w-64 bg-gray-200 p-4">
-              {/* Sidebar content */}
-              Sidebar
-            </aside>
-            <main className="flex-1 flex flex-col">
-              <div className="bg-gray-100 p-2">
-                {/* Toolbar content */}
-                Toolbar
+        <ZoomProvider>
+          <div className="flex flex-col h-screen">
+            <TopNav />
+            <div className="flex flex-1 overflow-hidden">
+              <Sidebar />
+              <div className="flex-1 flex flex-col overflow-hidden relative">
+                <Toolbar />
+                <ZoomWrapper>
+                  <main className="flex-1 overflow-auto bg-[#EBECF0]">
+                    {children}
+                  </main>
+                </ZoomWrapper>
               </div>
-              <div className="flex-1 p-4">
-                {children}
-              </div>
-            </main>
+            </div>
           </div>
-        </div>
+        </ZoomProvider>
       </body>
     </html>
   )
