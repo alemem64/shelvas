@@ -13,12 +13,13 @@ export const ZoomProvider: React.FC<{ children: React.ReactNode }> = ({ children
   return <ZoomContext.Provider value={{ zoomLevel, setZoomLevel }}>{children}</ZoomContext.Provider>;
 };
 
-const useZoom = (): ZoomContextType => {
+export function useZoom(): ZoomContextType {
   const context = useContext(ZoomContext);
   if (context === undefined) {
     throw new Error('useZoom must be used within a ZoomProvider');
   }
   return context;
-};
+}
 
-export { useZoom };
+// Add this line at the end of the file
+export default { ZoomProvider, useZoom };

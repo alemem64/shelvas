@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useRef } from 'react';
-import { useZoom } from '@/context/ZoomContext';
+import { useZoom } from '../context/ZoomContext';
 
 const ZoomWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { zoomLevel, setZoomLevel } = useZoom();
@@ -29,7 +29,7 @@ const ZoomWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }, [zoomLevel, setZoomLevel]);
 
   return (
-    <div ref={wrapperRef} style={{ transform: `scale(${parseInt(zoomLevel) / 100})`, transformOrigin: 'top left' }}>
+    <div ref={wrapperRef} className="w-full h-full" style={{ transform: `scale(${parseInt(zoomLevel) / 100})`, transformOrigin: 'top left' }}>
       {children}
     </div>
   );
