@@ -1,14 +1,16 @@
 'use client'
 import React, { useState, useRef, useEffect } from 'react';
 import { useZoom } from '@/context/ZoomContext';
-import { LuMousePointer2, LuImage, LuPenTool, LuUndo2, LuRedo2 } from 'react-icons/lu';
+import { LuMousePointer2, LuImage, LuUndo2, LuRedo2 } from 'react-icons/lu';
 import { RxHand } from 'react-icons/rx';
 import { PiTextTBold, PiChatTeardropBold } from 'react-icons/pi';
 import { TbMath } from 'react-icons/tb';
-import { BiSquareRounded } from 'react-icons/bi';
+import { IoShapesOutline } from 'react-icons/io5';
+import { CiViewTable } from 'react-icons/ci';
 import { IoPerson } from 'react-icons/io5';
 import { FiChevronDown } from 'react-icons/fi';
 import { BsGrid } from 'react-icons/bs';
+import { LiaPenNibSolid } from 'react-icons/lia';
 
 const TopNav = () => {
   const [selectedTool, setSelectedTool] = useState(null);
@@ -83,9 +85,10 @@ const TopNav = () => {
             <Divider />
             <ToolButton icon="text" selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
             <ToolButton icon="formula" selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
+            <ToolButton icon="table" selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
             <Divider />
             <ToolButton icon="image" selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
-            <ToolButton icon="rectangle" hasDropdown selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
+            <ToolButton icon="shape" hasDropdown selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
             <ToolButton icon="pen" selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
             <Divider />
             <ToolButton icon="undo" selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
@@ -108,35 +111,33 @@ const TopNav = () => {
             </svg>
           </button>
         </div>
-        <div className="flex items-center space-x-2">
-          <div className="flex items-center">
-            <div className="w-12 flex items-center justify-end">
-              {isEditing ? (
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={inputValue}
-                  onChange={handleInputChange}
-                  onBlur={handleInputBlur}
-                  onKeyDown={handleInputKeyDown}
-                  className="w-full text-xs font-medium bg-transparent text-white text-center"
-                />
-              ) : (
-                <button
-                  onClick={handleZoomClick}
-                  className="w-full text-xs font-medium flex items-center justify-end"
-                >
-                  <span className="hover:bg-gray-700 rounded-l-sm transition-colors pl-1 py-0.5 pr-0.5">
-                    {zoomPercentage}%
-                  </span>
-                </button>
-              )}
-            </div>
-            <button className="hover:bg-gray-700 rounded-r-sm transition-colors pr-1 py-0.5 pl-0.5">
-              <FiChevronDown className="w-4 h-4" />
-            </button>
+        <div className="flex items-center">
+          <div className="w-10 flex items-center justify-end">
+            {isEditing ? (
+              <input
+                ref={inputRef}
+                type="text"
+                value={inputValue}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                onKeyDown={handleInputKeyDown}
+                className="w-full pl-2 py-1 rounded-l-md text-xs font-medium bg-gray-700 text-white text-center"
+              />
+            ) : (
+              <button
+                onClick={handleZoomClick}
+                className="w-full pl-2 py-1 rounded-l-md text-xs font-medium flex items-center justify-end"
+              >
+                <span className="hover:bg-gray-700 pl-2 pr-1 py-1 rounded-md transition-colors">
+                  {zoomPercentage}%
+                </span>
+              </button>
+            )}
           </div>
-          <button className="hover:bg-gray-700 rounded-md transition-colors p-1">
+          <button className="pr-1 py-1 hover:bg-gray-700 rounded-r-md transition-colors">
+            <FiChevronDown className="w-4 h-4" />
+          </button>
+          <button className="p-1 ml-2 hover:bg-gray-700 rounded-md transition-colors">
             <BsGrid className="w-4 h-4" />
           </button>
         </div>
@@ -149,7 +150,7 @@ const TopNav = () => {
 };
 const ToolButton = ({ icon, hasDropdown = false, selectedTool, setSelectedTool }) => (
   <button 
-    className={`p-1 rounded-sm relative ${
+    className={`p-1 rounded relative ${
       selectedTool === icon ? 'bg-[#3579FF]' : 'hover:bg-gray-700'
     }`}
     onClick={() => setSelectedTool(icon)}
@@ -168,17 +169,19 @@ const getToolIcon = (icon) => {
     case 'pointer':
       return <LuMousePointer2 className="w-5 h-5" />;
     case 'hand':
-      return <RxHand className="w-5 h-5" />;
+      return <RxHand className="w-[18px] h-[18px]" />;
     case 'text':
       return <PiTextTBold className="w-5 h-5" />;
     case 'formula':
       return <TbMath className="w-5 h-5" />;
+    case 'table':
+      return <CiViewTable className="w-5 h-5" />;
     case 'image':
       return <LuImage className="w-5 h-5" />;
-    case 'rectangle':
-      return <BiSquareRounded className="w-5 h-5" />;
+    case 'shape':
+      return <IoShapesOutline className="w-5 h-5" />;
     case 'pen':
-      return <LuPenTool className="w-5 h-5" />;
+      return <LiaPenNibSolid className="w-5 h-5" />;
     case 'undo':
       return <LuUndo2 className="w-5 h-5" />;
     case 'redo':

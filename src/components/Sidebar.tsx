@@ -14,6 +14,16 @@ const pages = [
 
 const Sidebar = () => {
   const [selectedPage, setSelectedPage] = useState(pages[0].name);
+  const [isRightBarVisible, setIsRightBarVisible] = useState(true);
+
+  const handlePageClick = (pageName: string) => {
+    if (selectedPage === pageName) {
+      setIsRightBarVisible(!isRightBarVisible);
+    } else {
+      setSelectedPage(pageName);
+      setIsRightBarVisible(true);
+    }
+  };
 
   return (
     <aside className="flex bg-[#1E1E1E] text-gray-300">
@@ -26,7 +36,7 @@ const Sidebar = () => {
               className={`cursor-pointer hover:bg-[#2C2C2C] rounded w-16 h-16 ${
                 selectedPage === page.name ? 'bg-[#2C2C2C]' : ''
               }`}
-              onClick={() => setSelectedPage(page.name)}
+              onClick={() => handlePageClick(page.name)}
             >
               <div className="w-full h-full flex flex-col items-center justify-center">
                 <svg className="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -40,10 +50,12 @@ const Sidebar = () => {
       </div>
       
       {/* Right bar with fixed width */}
-      <div className="w-64 p-4 overflow-y-auto bg-[#2C2C2C]">
-        <h2 className="text-xl font-bold mb-4">{selectedPage}</h2>
-        <p>Content for {selectedPage} goes here.</p>
-      </div>
+      {isRightBarVisible && (
+        <div className="w-64 p-4 overflow-y-auto bg-[#2C2C2C]">
+          <h2 className="text-xl font-bold mb-4">{selectedPage}</h2>
+          <p>Content for {selectedPage} goes here.</p>
+        </div>
+      )}
     </aside>
   );
 };
