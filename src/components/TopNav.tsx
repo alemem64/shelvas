@@ -4,7 +4,9 @@ import { useZoom } from '@/context/ZoomContext';
 
 const TopNav = () => {
   const [selectedTool, setSelectedTool] = useState(null);
-  const { zoomLevel, setZoomLevel } = useZoom();
+  const { scale } = useZoom();
+
+  const zoomPercentage = Math.round(scale * 100);
 
   return (
     <nav className="bg-[#1E1E1E] text-white p-2 flex items-center text-sm">
@@ -62,7 +64,7 @@ const TopNav = () => {
         </div>
         <div className="flex items-center space-x-2">
           <button className="px-2 py-1 rounded-md text-xs font-medium flex items-center hover:bg-gray-700 transition-colors">
-            {zoomLevel}
+            {zoomPercentage}%
             <svg className="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
             </svg>
