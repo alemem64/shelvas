@@ -19,9 +19,9 @@ const ZoomWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         const content = contentRef.current;
         if (!content) return;
 
-        const wrapperRect = wrapper.getBoundingClientRect();
-        const x = e.clientX - wrapperRect.left;
-        const y = e.clientY - wrapperRect.top;
+        const rect = content.getBoundingClientRect();
+        const x = e.clientX - rect.left + wrapper.scrollLeft;
+        const y = e.clientY - rect.top + wrapper.scrollTop;
 
         const delta = e.deltaY > 0 ? 0.9 : 1.1;
         const newScale = Math.min(Math.max(transform.scale * delta, 0.25), 4);
@@ -32,6 +32,10 @@ const ZoomWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
         setTransform({ scale: newScale, x: newX, y: newY });
         setZoomLevel(`${Math.round(newScale * 100)}%`);
+
+        // Adjust scroll position
+        wrapper.scrollLeft = x * scaleChange - e.clientX + wrapper.offsetLeft;
+        wrapper.scrollTop = y * scaleChange - e.clientY + wrapper.offsetTop;
       }
     };
 
@@ -43,12 +47,12 @@ const ZoomWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }, [transform, setZoomLevel]);
 
   return (
-    <div className="w-full h-full overflow-hidden bg-[#EBECF0]" ref={wrapperRef}>
+    <div className="w-full h-full overflow-auto bg-[#EBECF0]" ref={wrapperRef}>
       <div 
         ref={contentRef}
-        className="w-full h-full origin-top-left"
+        className="min-h-full min-w-full inline-block origin-top-left"
         style={{ 
-          transform: `scale(${transform.scale}) translate(${-transform.x / transform.scale}px, ${-transform.y / transform.scale}px)`,
+          transform: `scale(${transform.scale}) translate(${-transform.x}px, ${-transform.y}px)`,
         }}
       >
         {children}
