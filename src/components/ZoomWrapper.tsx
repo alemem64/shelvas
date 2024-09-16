@@ -26,19 +26,23 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
     setPosition(newPosition);
   };
 
-  const limitVerticalScroll = useCallback((newPosition: { x: number, y: number }) => {
+  const limitPosition = useCallback((newPosition: { x: number, y: number }) => {
     const wrapper = wrapperRef.current;
     const content = contentRef.current;
     if (!wrapper || !content) return newPosition;
 
+    const wrapperWidth = wrapper.clientWidth;
     const wrapperHeight = wrapper.clientHeight;
+    const contentWidth = content.clientWidth * scale;
     const contentHeight = content.clientHeight * scale;
 
-    const minY = wrapperHeight - contentHeight;
-    const maxY = 0;
+    const minX = scale < 0.7 ? (wrapperWidth - contentWidth) / 2 : Math.min(wrapperWidth - contentWidth, 0);
+    const maxX = scale < 0.7 ? (wrapperWidth - contentWidth) / 2 : Math.max(0, wrapperWidth - contentWidth);
+    const minY = Math.min(wrapperHeight - contentHeight, 0);
+    const maxY = Math.max(0, wrapperHeight - contentHeight);
 
     return {
-      x: newPosition.x,
+      x: Math.min(Math.max(newPosition.x, minX), maxX),
       y: Math.min(Math.max(newPosition.y, minY), maxY)
     };
   }, [scale]);
@@ -52,13 +56,13 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (isDragging && scale > 0.7) {
-      const newPosition = limitVerticalScroll({
+      const newPosition = limitPosition({
         x: e.clientX - startDragPosition.x,
         y: e.clientY - startDragPosition.y,
       });
       setPosition(newPosition);
     }
-  }, [isDragging, scale, startDragPosition, limitVerticalScroll]);
+  }, [isDragging, scale, startDragPosition, limitPosition]);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -100,7 +104,7 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
           y: (mouseY - position.y) / scale,
         };
 
-        const newPosition = limitVerticalScroll({
+        const newPosition = limitPosition({
           x: mouseX - contentPoint.x * newScale,
           y: mouseY - contentPoint.y * newScale,
         });
@@ -118,19 +122,19 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
 
       if (scale > 0.7) {
         // Allow both horizontal and vertical scrolling
-        setPosition(prevPosition => limitVerticalScroll({
+        setPosition(prevPosition => limitPosition({
           x: prevPosition.x - deltaX / scale,
           y: prevPosition.y - deltaY / scale,
         }));
       } else {
         // Only allow vertical scrolling
-        setPosition(prevPosition => limitVerticalScroll({
+        setPosition(prevPosition => limitPosition({
           x: prevPosition.x,
-          y: prevPosition.y - deltaY,
+          y: prevPosition.y - deltaY / scale,
         }));
       }
     }
-  }, [scale, setScale, position, limitVerticalScroll]);
+  }, [scale, setScale, position, limitPosition]);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
