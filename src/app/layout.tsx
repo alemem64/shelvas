@@ -11,7 +11,10 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'shelvas - Design',
-  description: 'Revolutionizing the book industry',
+  description: 'Revolutionizing the book design',
+  icons: {
+    icon: '/favicon.svg',
+  },
 }
 
 export default function RootLayout({
