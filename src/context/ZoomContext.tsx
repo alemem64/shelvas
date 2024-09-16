@@ -1,5 +1,5 @@
 'use client'
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
 interface ZoomContextType {
   scale: number;
@@ -9,7 +9,11 @@ interface ZoomContextType {
 const ZoomContext = createContext<ZoomContextType | undefined>(undefined);
 
 export const ZoomProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [scale, setScale] = useState(1);
+  const [scale, setScaleState] = useState(1);
+
+  const setScale = useCallback((newScale: number) => {
+    setScaleState(Math.min(Math.max(newScale, 0.1), 5));
+  }, []);
 
   return (
     <ZoomContext.Provider value={{ scale, setScale }}>
@@ -26,5 +30,4 @@ export const useZoom = () => {
   return context;
 };
 
-// Add this line at the end of the file
 export default { ZoomProvider, useZoom };

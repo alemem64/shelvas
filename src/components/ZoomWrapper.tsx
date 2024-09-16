@@ -1,13 +1,14 @@
 'use client'
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
+import { useZoom } from '@/context/ZoomContext';
 
 interface ZoomWrapperProps {
   children: React.ReactNode;
 }
 
 const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
-  const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const { scale, setScale } = useZoom();
+  const [position, setPosition] = React.useState({ x: 0, y: 0 });
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -20,24 +21,33 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
       if (!wrapper || !content) return;
 
       const rect = wrapper.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
-
-      const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+      const zoomFactor = e.deltaY > 0 ? 0.94 : 1.06;
       const newScale = Math.min(Math.max(scale * zoomFactor, 0.1), 5);
 
-      const contentPoint = {
-        x: (mouseX - position.x) / scale,
-        y: (mouseY - position.y) / scale,
-      };
+      if (newScale >= 0.7) {
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
 
-      const newPosition = {
-        x: mouseX - contentPoint.x * newScale,
-        y: mouseY - contentPoint.y * newScale,
-      };
+        const contentPoint = {
+          x: (mouseX - position.x) / scale,
+          y: (mouseY - position.y) / scale,
+        };
+
+        const newPosition = {
+          x: mouseX - contentPoint.x * newScale,
+          y: mouseY - contentPoint.y * newScale,
+        };
+
+        setPosition(newPosition);
+      } else {
+        const newPosition = {
+          x: (wrapper.clientWidth - content.clientWidth * newScale) / 2,
+          y: (wrapper.clientHeight - content.clientHeight * newScale) / 2,
+        };
+        setPosition(newPosition);
+      }
 
       setScale(newScale);
-      setPosition(newPosition);
     }
   };
 
@@ -49,7 +59,7 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
         wrapper.removeEventListener('wheel', handleWheel);
       };
     }
-  }, [scale, position]);
+  }, [scale, position, setScale]);
 
   return (
     <div 

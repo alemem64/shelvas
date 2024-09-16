@@ -1,12 +1,48 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useZoom } from '@/context/ZoomContext';
 
 const TopNav = () => {
   const [selectedTool, setSelectedTool] = useState(null);
-  const { scale } = useZoom();
+  const { scale, setScale } = useZoom();
+  const [isEditing, setIsEditing] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const inputRef = useRef(null);
 
   const zoomPercentage = Math.round(scale * 100);
+
+  useEffect(() => {
+    if (isEditing) {
+      inputRef.current.focus();
+    }
+  }, [isEditing]);
+
+  const handleZoomClick = () => {
+    setIsEditing(true);
+    setInputValue(zoomPercentage.toString());
+  };
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleInputBlur = () => {
+    applyZoom();
+  };
+
+  const handleInputKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      applyZoom();
+    }
+  };
+
+  const applyZoom = () => {
+    const newZoom = parseFloat(inputValue);
+    if (!isNaN(newZoom) && newZoom >= 10 && newZoom <= 500) {
+      setScale(newZoom / 100);
+    }
+    setIsEditing(false);
+  };
 
   return (
     <nav className="bg-[#1E1E1E] text-white p-2 flex items-center text-sm">
@@ -63,12 +99,27 @@ const TopNav = () => {
           </button>
         </div>
         <div className="flex items-center space-x-2">
-          <button className="px-2 py-1 rounded-md text-xs font-medium flex items-center hover:bg-gray-700 transition-colors">
-            {zoomPercentage}%
-            <svg className="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
-          </button>
+          {isEditing ? (
+            <input
+              ref={inputRef}
+              type="text"
+              value={inputValue}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              onKeyDown={handleInputKeyDown}
+              className="w-16 px-2 py-1 rounded-md text-xs font-medium bg-gray-700 text-white"
+            />
+          ) : (
+            <button
+              onClick={handleZoomClick}
+              className="px-2 py-1 rounded-md text-xs font-medium flex items-center hover:bg-gray-700 transition-colors"
+            >
+              {zoomPercentage}%
+              <svg className="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          )}
           <button className="p-1 rounded-md hover:bg-gray-700 transition-colors">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
