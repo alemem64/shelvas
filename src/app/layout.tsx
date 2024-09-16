@@ -6,7 +6,7 @@ import Sidebar from '@/components/Sidebar/Sidebar'
 import Toolbar from '@/components/Toolbar'
 import { ZoomProvider } from '../context/ZoomContext';
 import { HandModeProvider } from '../context/HandModeContext';
-import { ToolbarProvider } from '../context/ToolbarContext'; // 추가
+import { ToolbarProvider } from '../context/ToolbarContext'; // 이 줄을 추가해주세요
 import ZoomWrapper from '@/components/ZoomWrapper';
 import SidebarShadow from '@/components/Sidebar/SidebarShadow';
 import ZoomWrapperShadow from '@/components/ZoomWrapperShadow';
@@ -29,9 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ZoomProvider>
-          <HandModeProvider>
-            <ToolbarProvider> {/* 추가 */}
+        <ToolbarProvider> {/* 이 줄을 추가해주세요 */}
+          <ZoomProvider>
+            <HandModeProvider>
               <div className="flex flex-col h-screen">
                 <TopNav />
                 <div className="flex flex-1 overflow-hidden">
@@ -52,9 +52,9 @@ export default function RootLayout({
                   </div>
                 </div>
               </div>
-            </ToolbarProvider> {/* 추가 */}
-          </HandModeProvider>
-        </ZoomProvider>
+            </HandModeProvider>
+          </ZoomProvider>
+        </ToolbarProvider> {/* 이 줄을 추가해주세요 */}
       </body>
     </html>
   )

@@ -5,22 +5,53 @@ import React, { createContext, useContext, useState } from 'react';
 interface ToolbarContextType {
   isWhiteBar: boolean;
   toggleWhiteBar: () => void;
-  activeComponent: string | null;
-  setActiveComponent: (component: string | null) => void;
+  activePage: string | null;
+  setActivePage: (page: string | null) => void;
+  isRightBarVisible: boolean;
+  toggleRightBar: () => void;
+  whitePage: string | null;
+  setWhitePage: (page: string | null) => void;
 }
 
 const ToolbarContext = createContext<ToolbarContextType | undefined>(undefined);
 
 export const ToolbarProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isWhiteBar, setIsWhiteBar] = useState(false);
-  const [activeComponent, setActiveComponent] = useState<string | null>(null);
+  const [activePage, setActivePage] = useState<string | null>(null);
+  const [isRightBarVisible, setIsRightBarVisible] = useState(true);
+  const [whitePage, setWhitePage] = useState<string | null>(null);
 
   const toggleWhiteBar = () => {
-    setIsWhiteBar(!isWhiteBar);
+    setIsWhiteBar(prev => !prev);
+  };
+
+  const setActiveWhitePage = (page: string | null) => {
+    if (page === whitePage) {
+      setWhitePage(null);
+      setIsWhiteBar(false);
+    } else {
+      setWhitePage(page);
+      setIsWhiteBar(true);
+    }
+    setActivePage(null);
+    setIsRightBarVisible(true);
+  };
+
+  const toggleRightBar = () => {
+    setIsRightBarVisible(prev => !prev);
   };
 
   return (
-    <ToolbarContext.Provider value={{ isWhiteBar, toggleWhiteBar, activeComponent, setActiveComponent }}>
+    <ToolbarContext.Provider value={{ 
+      isWhiteBar, 
+      toggleWhiteBar, 
+      activePage, 
+      setActivePage,
+      isRightBarVisible,
+      toggleRightBar,
+      whitePage,
+      setWhitePage: setActiveWhitePage
+    }}>
       {children}
     </ToolbarContext.Provider>
   );

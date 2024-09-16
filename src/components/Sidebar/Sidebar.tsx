@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React from 'react';
 import { PiNotebookBold } from "react-icons/pi";
 import { FaRegBookmark } from "react-icons/fa";
 import { LuShapes, LuHash } from "react-icons/lu";
@@ -16,6 +16,8 @@ import ProjectBin from './DarkPages/ProjectBin';
 import PageNumbering from './DarkPages/PageNumbering';
 import Layers from './DarkPages/Layers';
 import Upload from './DarkPages/Upload';
+import Fonts from './WhitePages/Fonts';
+import Effect from './WhitePages/Effect';
 
 const pages = [
   { name: 'Design', icon: PiNotebookBold, component: Design },
@@ -28,24 +30,26 @@ const pages = [
 ];
 
 const Sidebar = () => {
-  const [isRightBarVisible, setIsRightBarVisible] = useState(true);
-  const { isWhiteBar, toggleWhiteBar, activeComponent, setActiveComponent } = useToolbar();
+  const { isWhiteBar, toggleWhiteBar, activePage, setActivePage, isRightBarVisible, toggleRightBar, whitePage, setWhitePage } = useToolbar();
 
   const handlePageClick = (pageName: string) => {
-    if (activeComponent === pageName) {
-      setIsRightBarVisible(!isRightBarVisible);
+    if (activePage === pageName) {
+      toggleRightBar();
     } else {
-      setActiveComponent(pageName);
-      setIsRightBarVisible(true);
+      setActivePage(pageName);
+      if (!isRightBarVisible) {
+        toggleRightBar();
+      }
     }
+    
     if (isWhiteBar) {
-      toggleWhiteBar(); // White bar 모드를 비활성화
+      setWhitePage(null);
     }
   };
 
   const SelectedComponent = isWhiteBar
-    ? Fonts
-    : pages.find(page => page.name === activeComponent)?.component || (() => <div>Page not found</div>);
+    ? (whitePage === 'Fonts' ? Fonts : whitePage === 'Effect' ? Effect : null)
+    : pages.find(page => page.name === activePage)?.component || null;
 
   return (
     <aside className="flex bg-[#1E1E1E] text-gray-300">
@@ -55,7 +59,7 @@ const Sidebar = () => {
             <li
               key={page.name}
               className={`cursor-pointer hover:bg-[#2C2C2C] rounded w-16 h-16 ${
-                activeComponent === page.name && !isWhiteBar ? 'bg-[#2C2C2C]' : ''
+                activePage === page.name && !isWhiteBar ? 'bg-[#2C2C2C]' : ''
               }`}
               onClick={() => handlePageClick(page.name)}
             >
@@ -67,9 +71,9 @@ const Sidebar = () => {
           ))}
         </ul>
       </div>
-      {(isRightBarVisible || isWhiteBar) && (
+      {isRightBarVisible && (
         <div className={`w-64 p-4 overflow-y-auto ${isWhiteBar ? 'bg-white text-black' : 'bg-[#2C2C2C]'}`}>
-          <SelectedComponent />
+          {SelectedComponent && <SelectedComponent />}
         </div>
       )}
     </aside>
