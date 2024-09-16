@@ -6,6 +6,7 @@ import { FaRegBookmark } from "react-icons/fa";
 import { LuShapes, LuHash } from "react-icons/lu";
 import { BsInboxes } from "react-icons/bs";
 import { FiLayers, FiUploadCloud } from "react-icons/fi";
+import { useToolbar } from '../../context/ToolbarContext';
 
 // 모든 페이지 컴포넌트를 미리 임포트
 import Design from './DarkPages/Design';
@@ -27,19 +28,24 @@ const pages = [
 ];
 
 const Sidebar = () => {
-  const [selectedPage, setSelectedPage] = useState('Design');
   const [isRightBarVisible, setIsRightBarVisible] = useState(true);
+  const { isWhiteBar, toggleWhiteBar, activeComponent, setActiveComponent } = useToolbar();
 
   const handlePageClick = (pageName: string) => {
-    if (selectedPage === pageName) {
+    if (activeComponent === pageName) {
       setIsRightBarVisible(!isRightBarVisible);
     } else {
-      setSelectedPage(pageName);
+      setActiveComponent(pageName);
       setIsRightBarVisible(true);
+    }
+    if (isWhiteBar) {
+      toggleWhiteBar(); // White bar 모드를 비활성화
     }
   };
 
-  const SelectedComponent = pages.find(page => page.name === selectedPage)?.component || (() => <div>Page not found</div>);
+  const SelectedComponent = isWhiteBar
+    ? Fonts
+    : pages.find(page => page.name === activeComponent)?.component || (() => <div>Page not found</div>);
 
   return (
     <aside className="flex bg-[#1E1E1E] text-gray-300">
@@ -49,7 +55,7 @@ const Sidebar = () => {
             <li
               key={page.name}
               className={`cursor-pointer hover:bg-[#2C2C2C] rounded w-16 h-16 ${
-                selectedPage === page.name ? 'bg-[#2C2C2C]' : ''
+                activeComponent === page.name && !isWhiteBar ? 'bg-[#2C2C2C]' : ''
               }`}
               onClick={() => handlePageClick(page.name)}
             >
@@ -61,8 +67,8 @@ const Sidebar = () => {
           ))}
         </ul>
       </div>
-      {isRightBarVisible && (
-        <div className="w-64 bg-[#ffffff] p-4 overflow-y-auto">
+      {(isRightBarVisible || isWhiteBar) && (
+        <div className={`w-64 p-4 overflow-y-auto ${isWhiteBar ? 'bg-white text-black' : 'bg-[#2C2C2C]'}`}>
           <SelectedComponent />
         </div>
       )}
