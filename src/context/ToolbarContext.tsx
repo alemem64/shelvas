@@ -4,13 +4,15 @@ import React, { createContext, useContext, useState } from 'react';
 
 interface ToolbarContextType {
   isWhiteBar: boolean;
-  toggleWhiteBar: () => void;
+  setIsWhiteBar: (value: boolean) => void;
   activePage: string | null;
   setActivePage: (page: string | null) => void;
   isRightBarVisible: boolean;
-  toggleRightBar: () => void;
+  setIsRightBarVisible: (value: boolean) => void;
   whitePage: string | null;
   setWhitePage: (page: string | null) => void;
+  lastClickedButton: string | null;
+  setLastClickedButton: (button: string | null) => void;
 }
 
 const ToolbarContext = createContext<ToolbarContextType | undefined>(undefined);
@@ -20,37 +22,20 @@ export const ToolbarProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [activePage, setActivePage] = useState<string | null>(null);
   const [isRightBarVisible, setIsRightBarVisible] = useState(true);
   const [whitePage, setWhitePage] = useState<string | null>(null);
-
-  const toggleWhiteBar = () => {
-    setIsWhiteBar(prev => !prev);
-  };
-
-  const setActiveWhitePage = (page: string | null) => {
-    if (page === whitePage) {
-      setWhitePage(null);
-      setIsWhiteBar(false);
-    } else {
-      setWhitePage(page);
-      setIsWhiteBar(true);
-    }
-    setActivePage(null);
-    setIsRightBarVisible(true);
-  };
-
-  const toggleRightBar = () => {
-    setIsRightBarVisible(prev => !prev);
-  };
+  const [lastClickedButton, setLastClickedButton] = useState<string | null>(null);
 
   return (
     <ToolbarContext.Provider value={{ 
       isWhiteBar, 
-      toggleWhiteBar, 
+      setIsWhiteBar,
       activePage, 
       setActivePage,
       isRightBarVisible,
-      toggleRightBar,
+      setIsRightBarVisible,
       whitePage,
-      setWhitePage: setActiveWhitePage
+      setWhitePage,
+      lastClickedButton,
+      setLastClickedButton
     }}>
       {children}
     </ToolbarContext.Provider>

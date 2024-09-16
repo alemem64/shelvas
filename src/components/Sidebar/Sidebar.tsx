@@ -30,21 +30,32 @@ const pages = [
 ];
 
 const Sidebar = () => {
-  const { isWhiteBar, toggleWhiteBar, activePage, setActivePage, isRightBarVisible, toggleRightBar, whitePage, setWhitePage } = useToolbar();
+  const { 
+    isWhiteBar, 
+    setIsWhiteBar,
+    activePage, 
+    setActivePage, 
+    isRightBarVisible, 
+    setIsRightBarVisible, 
+    whitePage, 
+    setWhitePage,
+    lastClickedButton,
+    setLastClickedButton
+  } = useToolbar();
 
   const handlePageClick = (pageName: string) => {
-    if (activePage === pageName) {
-      toggleRightBar();
+    if (pageName === lastClickedButton && !isWhiteBar) {
+      setIsRightBarVisible(false);
+      setActivePage(null);
+      setLastClickedButton(null);
     } else {
       setActivePage(pageName);
-      if (!isRightBarVisible) {
-        toggleRightBar();
-      }
+      setLastClickedButton(pageName);
+      setIsRightBarVisible(true);
     }
     
-    if (isWhiteBar) {
-      setWhitePage(null);
-    }
+    setIsWhiteBar(false);
+    setWhitePage(null);
   };
 
   const SelectedComponent = isWhiteBar

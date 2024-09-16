@@ -3,23 +3,29 @@ import React from 'react';
 import { useToolbar } from '../context/ToolbarContext';
 
 const Toolbar = () => {
-  const { isWhiteBar, whitePage, setWhitePage, toggleRightBar } = useToolbar();
+  const { 
+    isWhiteBar, 
+    setIsWhiteBar, 
+    whitePage, 
+    setWhitePage, 
+    lastClickedButton, 
+    setLastClickedButton,
+    setIsRightBarVisible,
+    setActivePage
+  } = useToolbar();
 
-  const handleSerifClick = () => {
-    if (whitePage === 'Fonts') {
-      toggleRightBar();
+  const handleButtonClick = (page: string) => {
+    if (page === lastClickedButton && isWhiteBar) {
+      setIsRightBarVisible(false);
       setWhitePage(null);
+      setLastClickedButton(null);
+      setIsWhiteBar(false);
     } else {
-      setWhitePage('Fonts');
-    }
-  };
-
-  const handleEffectClick = () => {
-    if (whitePage === 'Effect') {
-      toggleRightBar();
-      setWhitePage(null);
-    } else {
-      setWhitePage('Effect');
+      setWhitePage(page);
+      setLastClickedButton(page);
+      setIsRightBarVisible(true);
+      setIsWhiteBar(true);
+      setActivePage(null);
     }
   };
 
@@ -28,16 +34,15 @@ const Toolbar = () => {
       <div className="absolute left-0 right-0 top-9 h-5 bg-gradient-to-b from-black/20 to-transparent pointer-events-none z-0" />
       <div className="bg-white p-2 pl-4 flex justify-start items-center space-x-3 text-gray-700 text-xs shadow-toolbar relative z-10">
         <button
-          className={`border border-gray-300 rounded p-1 bg-transparent hover:bg-gray-100 w-[70px] text-left flex justify-between items-center ${
-            isWhiteBar && whitePage === 'Fonts' ? 'bg-gray-200' : ''
-          }`}
-          onClick={handleSerifClick}
+          className="border border-gray-300 rounded p-1 bg-transparent hover:bg-gray-100 w-[70px] text-left flex justify-between items-center"
+          onClick={() => handleButtonClick('Fonts')}
         >
           Serif
           <svg className="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
           </svg>
         </button>
+     
         <select className="border border-gray-300 rounded p-1 bg-transparent hover:bg-gray-100">
           <option>Regular</option>
         </select>
@@ -64,11 +69,9 @@ const Toolbar = () => {
             </svg>
           </button>
         </div>
-        <button
-          className={`rounded px-2 py-1 hover:bg-gray-100 ${
-            isWhiteBar && whitePage === 'Effect' ? 'bg-gray-200' : ''
-          }`}
-          onClick={handleEffectClick}
+        <button 
+          className="rounded px-2 py-1 hover:bg-gray-100"
+          onClick={() => handleButtonClick('Effect')}
         >
           Effect
         </button>
