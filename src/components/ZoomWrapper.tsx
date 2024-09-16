@@ -7,10 +7,28 @@ interface ZoomWrapperProps {
 }
 
 const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
-  const { scale, setScale } = useZoom();
+  const { scale, setScale, isKeyboardInput } = useZoom();
   const [position, setPosition] = React.useState({ x: 0, y: 0 });
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  const centerContent = (newScale: number) => {
+    const wrapper = wrapperRef.current;
+    const content = contentRef.current;
+    if (!wrapper || !content) return;
+
+    const newPosition = {
+      x: (wrapper.clientWidth - content.clientWidth * newScale) / 2,
+      y: (wrapper.clientHeight - content.clientHeight * newScale) / 2,
+    };
+    setPosition(newPosition);
+  };
+
+  useEffect(() => {
+    if (isKeyboardInput) {
+      centerContent(scale);
+    }
+  }, [scale, isKeyboardInput]);
 
   const handleWheel = (e: WheelEvent) => {
     e.preventDefault();
@@ -40,14 +58,10 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
 
         setPosition(newPosition);
       } else {
-        const newPosition = {
-          x: (wrapper.clientWidth - content.clientWidth * newScale) / 2,
-          y: (wrapper.clientHeight - content.clientHeight * newScale) / 2,
-        };
-        setPosition(newPosition);
+        centerContent(newScale);
       }
 
-      setScale(newScale);
+      setScale(newScale, false);
     }
   };
 

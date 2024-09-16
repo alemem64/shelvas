@@ -7,22 +7,26 @@ const TopNav = () => {
   const { scale, setScale } = useZoom();
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const zoomPercentage = Math.round(scale * 100);
 
   useEffect(() => {
-    if (isEditing) {
+    if (isEditing && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isEditing]);
+
+  useEffect(() => {
+    setInputValue(zoomPercentage.toString());
+  }, [zoomPercentage]);
 
   const handleZoomClick = () => {
     setIsEditing(true);
     setInputValue(zoomPercentage.toString());
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
@@ -30,7 +34,7 @@ const TopNav = () => {
     applyZoom();
   };
 
-  const handleInputKeyDown = (e) => {
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       applyZoom();
     }
@@ -39,7 +43,7 @@ const TopNav = () => {
   const applyZoom = () => {
     const newZoom = parseFloat(inputValue);
     if (!isNaN(newZoom) && newZoom >= 10 && newZoom <= 500) {
-      setScale(newZoom / 100);
+      setScale(newZoom / 100, true);
     }
     setIsEditing(false);
   };
