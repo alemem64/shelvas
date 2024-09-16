@@ -10,32 +10,30 @@ const ZoomWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
-    if (!wrapper) return;
+    const content = contentRef.current;
+    if (!wrapper || !content) return;
 
     const handleWheel = (e: WheelEvent) => {
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
 
-        const content = contentRef.current;
-        if (!content) return;
-
         const rect = content.getBoundingClientRect();
-        const x = e.clientX - rect.left + wrapper.scrollLeft;
-        const y = e.clientY - rect.top + wrapper.scrollTop;
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
 
         const delta = e.deltaY > 0 ? 0.9 : 1.1;
         const newScale = Math.min(Math.max(transform.scale * delta, 0.25), 4);
 
         const scaleChange = newScale / transform.scale;
-        const newX = x - (x - transform.x) * scaleChange;
-        const newY = y - (y - transform.y) * scaleChange;
+        const newX = transform.x - (mouseX / transform.scale) * (scaleChange - 1);
+        const newY = transform.y - (mouseY / transform.scale) * (scaleChange - 1);
 
         setTransform({ scale: newScale, x: newX, y: newY });
         setZoomLevel(`${Math.round(newScale * 100)}%`);
 
-        // Adjust scroll position
-        wrapper.scrollLeft = x * scaleChange - e.clientX + wrapper.offsetLeft;
-        wrapper.scrollTop = y * scaleChange - e.clientY + wrapper.offsetTop;
+        // Adjust scroll position immediately
+        wrapper.scrollLeft += mouseX * (scaleChange - 1);
+        wrapper.scrollTop += mouseY * (scaleChange - 1);
       }
     };
 
@@ -50,9 +48,12 @@ const ZoomWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     <div className="w-full h-full overflow-auto bg-[#EBECF0]" ref={wrapperRef}>
       <div 
         ref={contentRef}
-        className="min-h-full min-w-full inline-block origin-top-left"
+        className="min-h-full min-w-full inline-block"
         style={{ 
-          transform: `scale(${transform.scale}) translate(${-transform.x}px, ${-transform.y}px)`,
+          transform: `scale(${transform.scale})`,
+          transformOrigin: '0 0',
+          marginLeft: `${transform.x}px`,
+          marginTop: `${transform.y}px`,
         }}
       >
         {children}
