@@ -1,6 +1,11 @@
 'use client'
 import React, { useState, useRef, useEffect } from 'react';
 import { useZoom } from '@/context/ZoomContext';
+import { LuMousePointer2, LuImage, LuPenTool, LuUndo2, LuRedo2 } from 'react-icons/lu';
+import { RxHand } from 'react-icons/rx';
+import { PiTextTBold, PiChatTeardropLight } from 'react-icons/pi';
+import { TbMath } from 'react-icons/tb';
+import { BiSquareRounded } from 'react-icons/bi';
 
 const TopNav = () => {
   const [selectedTool, setSelectedTool] = useState(null);
@@ -156,25 +161,25 @@ const ToolButton = ({ icon, hasDropdown = false, selectedTool, setSelectedTool }
 const getToolIcon = (icon) => {
   switch (icon) {
     case 'pointer':
-      return <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M13.75 5.5L4 15.25V20h4.75l9.75-9.75L13.75 5.5zM17.5 3.5l3 3L22 5l-3-3-1.5 1.5z"/></svg>;
+      return <LuMousePointer2 className="w-5 h-5" />;
     case 'section':
-      return <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>;
+      return <RxHand className="w-5 h-5" />;
     case 'text':
-      return <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M5 5v3h5v11h3V8h5V5H5z"/></svg>;
+      return <PiTextTBold className="w-5 h-5" />;
     case 'formula':
-      return <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 8h-3v3h-2v-3H9v-2h3V6h2v3h3v2z"/></svg>;
+      return <TbMath className="w-5 h-5" />;
     case 'image':
-      return <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>;
+      return <LuImage className="w-5 h-5" />;
     case 'rectangle':
-      return <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>;
+      return <BiSquareRounded className="w-5 h-5" />;
     case 'pen':
-      return <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>;
+      return <LuPenTool className="w-5 h-5" />;
     case 'undo':
-      return <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>;
+      return <LuUndo2 className="w-5 h-5" />;
     case 'redo':
-      return <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z"/></svg>;
+      return <LuRedo2 className="w-5 h-5" />;
     case 'chat':
-      return <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>;
+      return <PiChatTeardropLight className="w-5 h-5" />;
     default:
       return null;
   }

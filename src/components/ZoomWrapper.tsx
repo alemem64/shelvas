@@ -1,5 +1,5 @@
 'use client'
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useZoom } from '@/context/ZoomContext';
 
 interface ZoomWrapperProps {
@@ -11,6 +11,8 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
   const [position, setPosition] = React.useState({ x: 0, y: 0 });
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = React.useState(false);
+  const [startDragPosition, setStartDragPosition] = React.useState({ x: 0, y: 0 });
 
   const centerContent = (newScale: number) => {
     const wrapper = wrapperRef.current;
@@ -24,13 +26,43 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
     setPosition(newPosition);
   };
 
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (scale > 0.7) {
+      setIsDragging(true);
+      setStartDragPosition({ x: e.clientX - position.x, y: e.clientY - position.y });
+    }
+  }, [scale, position.x, position.y]);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (isDragging && scale > 0.7) {
+      const newPosition = {
+        x: e.clientX - startDragPosition.x,
+        y: e.clientY - startDragPosition.y,
+      };
+      setPosition(newPosition);
+    }
+  }, [isDragging, scale, startDragPosition]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [handleMouseMove, handleMouseUp]);
+
   useEffect(() => {
     if (isKeyboardInput) {
       centerContent(scale);
     }
   }, [scale, isKeyboardInput]);
 
-  const handleWheel = (e: WheelEvent) => {
+  const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
     
     if (e.ctrlKey || e.metaKey) {
@@ -62,8 +94,25 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
       }
 
       setScale(newScale, false);
+    } else if (scale > 0.7) {
+      const scrollAmount = 30; // Adjust this value to change scroll speed
+      let deltaX = 0;
+      let deltaY = 0;
+
+      if (e.shiftKey || e.deltaX !== 0) {
+        // Horizontal scrolling
+        deltaX = e.deltaX !== 0 ? e.deltaX : e.deltaY;
+      } else {
+        // Vertical scrolling
+        deltaY = e.deltaY;
+      }
+
+      setPosition(prevPosition => ({
+        x: prevPosition.x - deltaX / scale,
+        y: prevPosition.y - deltaY / scale,
+      }));
     }
-  };
+  }, [scale, setScale, position]);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -83,7 +132,10 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
         height: '100%', 
         overflow: 'hidden',
         position: 'relative' as const,
+        cursor: scale > 0.7 ? 'move' : 'default',
+        backgroundColor: '#EBECF0', // 배경색 추가
       }}
+      onMouseDown={handleMouseDown}
     >
       <div
         ref={contentRef}
@@ -91,7 +143,7 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
           transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
           transformOrigin: '0 0',
           position: 'absolute' as const,
-          transition: 'transform 0.1s ease-out',
+          transition: isDragging ? 'none' : 'transform 0.05s ease-out',
         }}
       >
         {children}
