@@ -26,6 +26,23 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
     setPosition(newPosition);
   };
 
+  const limitVerticalScroll = useCallback((newPosition: { x: number, y: number }) => {
+    const wrapper = wrapperRef.current;
+    const content = contentRef.current;
+    if (!wrapper || !content) return newPosition;
+
+    const wrapperHeight = wrapper.clientHeight;
+    const contentHeight = content.clientHeight * scale;
+
+    const minY = wrapperHeight - contentHeight;
+    const maxY = 0;
+
+    return {
+      x: newPosition.x,
+      y: Math.min(Math.max(newPosition.y, minY), maxY)
+    };
+  }, [scale]);
+
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (scale > 0.7) {
       setIsDragging(true);
@@ -35,13 +52,13 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (isDragging && scale > 0.7) {
-      const newPosition = {
+      const newPosition = limitVerticalScroll({
         x: e.clientX - startDragPosition.x,
         y: e.clientY - startDragPosition.y,
-      };
+      });
       setPosition(newPosition);
     }
-  }, [isDragging, scale, startDragPosition]);
+  }, [isDragging, scale, startDragPosition, limitVerticalScroll]);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -83,10 +100,10 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
           y: (mouseY - position.y) / scale,
         };
 
-        const newPosition = {
+        const newPosition = limitVerticalScroll({
           x: mouseX - contentPoint.x * newScale,
           y: mouseY - contentPoint.y * newScale,
-        };
+        });
 
         setPosition(newPosition);
       } else {
@@ -101,19 +118,19 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
 
       if (scale > 0.7) {
         // Allow both horizontal and vertical scrolling
-        setPosition(prevPosition => ({
+        setPosition(prevPosition => limitVerticalScroll({
           x: prevPosition.x - deltaX / scale,
           y: prevPosition.y - deltaY / scale,
         }));
       } else {
         // Only allow vertical scrolling
-        setPosition(prevPosition => ({
+        setPosition(prevPosition => limitVerticalScroll({
           x: prevPosition.x,
           y: prevPosition.y - deltaY,
         }));
       }
     }
-  }, [scale, setScale, position]);
+  }, [scale, setScale, position, limitVerticalScroll]);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
