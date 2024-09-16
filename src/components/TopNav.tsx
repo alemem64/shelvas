@@ -11,13 +11,15 @@ import { IoPerson } from 'react-icons/io5';
 import { FiChevronDown } from 'react-icons/fi';
 import { BsGrid } from 'react-icons/bs';
 import { LiaPenNibSolid } from 'react-icons/lia';
+import { useHandMode } from '@/context/HandModeContext';
 
 const TopNav = () => {
-  const [selectedTool, setSelectedTool] = useState(null);
+  const [selectedTool, setSelectedTool] = useState('pointer');
   const { scale, setScale } = useZoom();
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const { isHandMode, setIsHandMode, isSpacePressed } = useHandMode();
 
   const zoomPercentage = Math.round(scale * 100);
 
@@ -30,6 +32,14 @@ const TopNav = () => {
   useEffect(() => {
     setInputValue(zoomPercentage.toString());
   }, [zoomPercentage]);
+
+  useEffect(() => {
+    if (isSpacePressed) {
+      setSelectedTool('hand');
+    } else if (selectedTool === 'hand' && !isHandMode) {
+      setSelectedTool('pointer');
+    }
+  }, [isSpacePressed, isHandMode, selectedTool]);
 
   const handleZoomClick = () => {
     setIsEditing(true);
@@ -58,6 +68,15 @@ const TopNav = () => {
     setIsEditing(false);
   };
 
+  const handleToolClick = (tool: string) => {
+    setSelectedTool(tool);
+    if (tool === 'hand') {
+      setIsHandMode(!isHandMode);
+    } else {
+      setIsHandMode(false);
+    }
+  };
+
   return (
     <nav className="bg-[#1E1E1E] text-white p-2 flex items-center text-sm">
       <button className="ml-2 mr-4 p-1 rounded-md hover:bg-gray-700">
@@ -80,22 +99,27 @@ const TopNav = () => {
       <div className="flex-grow flex justify-center">
         <div className="flex items-center space-x-3">
           <div className="flex space-x-1">
-            <ToolButton icon="pointer" hasDropdown selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
-            <ToolButton icon="hand" hasDropdown selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
+            <ToolButton icon="pointer" selectedTool={selectedTool} onClick={() => handleToolClick('pointer')} />
+            <ToolButton 
+              icon="hand" 
+              selectedTool={selectedTool}
+              isActive={isHandMode || isSpacePressed}
+              onClick={() => handleToolClick('hand')}
+            />
             <Divider />
-            <ToolButton icon="text" selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
-            <ToolButton icon="formula" selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
-            <ToolButton icon="table" selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
+            <ToolButton icon="text" selectedTool={selectedTool} onClick={() => handleToolClick('text')} />
+            <ToolButton icon="formula" selectedTool={selectedTool} onClick={() => handleToolClick('formula')} />
+            <ToolButton icon="table" selectedTool={selectedTool} onClick={() => handleToolClick('table')} />
             <Divider />
-            <ToolButton icon="image" selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
-            <ToolButton icon="shape" hasDropdown selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
-            <ToolButton icon="pen" selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
+            <ToolButton icon="image" selectedTool={selectedTool} onClick={() => handleToolClick('image')} />
+            <ToolButton icon="shape" selectedTool={selectedTool} onClick={() => handleToolClick('shape')} />
+            <ToolButton icon="pen" selectedTool={selectedTool} onClick={() => handleToolClick('pen')} />
             <Divider />
-            <ToolButton icon="undo" selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
-            <ToolButton icon="redo" selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
+            <ToolButton icon="undo" selectedTool={selectedTool} onClick={() => handleToolClick('undo')} />
+            <ToolButton icon="redo" selectedTool={selectedTool} onClick={() => handleToolClick('redo')} />
           </div>
           <Divider />
-          <ToolButton icon="chat" selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
+          <ToolButton icon="chat" selectedTool={selectedTool} onClick={() => handleToolClick('chat')} />
         </div>
       </div>
       <div className="flex-shrink-0 flex items-center space-x-3">
@@ -148,19 +172,15 @@ const TopNav = () => {
     </nav>
   );
 };
-const ToolButton = ({ icon, hasDropdown = false, selectedTool, setSelectedTool }) => (
+
+const ToolButton = ({ icon, selectedTool, isActive, onClick }) => (
   <button 
-    className={`p-1 rounded relative ${
-      selectedTool === icon ? 'bg-[#3579FF]' : 'hover:bg-gray-700'
+    className={`p-1 rounded ${
+      isActive || selectedTool === icon ? 'bg-[#3579FF]' : 'hover:bg-gray-700'
     }`}
-    onClick={() => setSelectedTool(icon)}
+    onClick={onClick}
   >
     {getToolIcon(icon)}
-    {hasDropdown && (
-      <svg className="w-2 h-2 absolute bottom-0 right-0" fill="currentColor" viewBox="0 0 20 20">
-        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-      </svg>
-    )}
   </button>
 );
 

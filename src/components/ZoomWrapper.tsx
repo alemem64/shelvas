@@ -1,6 +1,7 @@
 'use client'
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useZoom } from '@/context/ZoomContext';
+import { useHandMode } from '@/context/HandModeContext';
 
 interface ZoomWrapperProps {
   children: React.ReactNode;
@@ -8,23 +9,14 @@ interface ZoomWrapperProps {
 
 const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
   const { scale, setScale, isKeyboardInput } = useZoom();
-  const [position, setPosition] = React.useState({ x: 0, y: 0 });
+  const { isHandMode, isSpacePressed } = useHandMode();
+  const [position, setPosition] = useState({ x: 0, y: 0 });
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = React.useState(false);
-  const [startDragPosition, setStartDragPosition] = React.useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [startDragPosition, setStartDragPosition] = useState({ x: 0, y: 0 });
 
-  const centerContent = (newScale: number) => {
-    const wrapper = wrapperRef.current;
-    const content = contentRef.current;
-    if (!wrapper || !content) return;
-
-    const newPosition = {
-      x: (wrapper.clientWidth - content.clientWidth * newScale) / 2,
-      y: (wrapper.clientHeight - content.clientHeight * newScale) / 2,
-    };
-    setPosition(newPosition);
-  };
+  const isHandModeActive = isHandMode || isSpacePressed;
 
   const limitPosition = useCallback((newPosition: { x: number, y: number }) => {
     const wrapper = wrapperRef.current;
@@ -48,40 +40,42 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
   }, [scale]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (scale > 0.7) {
+    if (isHandModeActive) {
       setIsDragging(true);
       setStartDragPosition({ x: e.clientX - position.x, y: e.clientY - position.y });
     }
-  }, [scale, position.x, position.y]);
+  }, [position.x, position.y, isHandModeActive]);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (isDragging && scale > 0.7) {
-      const newPosition = limitPosition({
-        x: e.clientX - startDragPosition.x,
-        y: e.clientY - startDragPosition.y,
-      });
-      setPosition(newPosition);
+    if (isDragging) {
+      let newPosition;
+      if (scale < 0.7) {
+        // Only allow vertical movement, keep horizontal position centered
+        const wrapper = wrapperRef.current;
+        const content = contentRef.current;
+        if (wrapper && content) {
+          const contentWidth = content.clientWidth * scale;
+          newPosition = limitPosition({
+            x: (wrapper.clientWidth - contentWidth) / 2,
+            y: e.clientY - startDragPosition.y,
+          });
+        }
+      } else {
+        // Allow movement in all directions
+        newPosition = limitPosition({
+          x: e.clientX - startDragPosition.x,
+          y: e.clientY - startDragPosition.y,
+        });
+      }
+      if (newPosition) {
+        setPosition(newPosition);
+      }
     }
   }, [isDragging, scale, startDragPosition, limitPosition]);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
   }, []);
-
-  useEffect(() => {
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [handleMouseMove, handleMouseUp]);
-
-  useEffect(() => {
-    if (isKeyboardInput) {
-      centerContent(scale);
-    }
-  }, [scale, isKeyboardInput]);
 
   const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
@@ -95,46 +89,63 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
       const zoomFactor = e.deltaY > 0 ? 0.94 : 1.06;
       const newScale = Math.min(Math.max(scale * zoomFactor, 0.1), 5);
 
-      if (newScale >= 0.7) {
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
 
-        const contentPoint = {
-          x: (mouseX - position.x) / scale,
-          y: (mouseY - position.y) / scale,
-        };
+      const contentPoint = {
+        x: (mouseX - position.x) / scale,
+        y: (mouseY - position.y) / scale,
+      };
 
-        const newPosition = limitPosition({
+      let newPosition;
+      if (newScale < 0.7) {
+        // Keep content horizontally centered, but zoom towards/away from mouse vertically
+        const contentWidth = content.clientWidth * newScale;
+        newPosition = limitPosition({
+          x: (wrapper.clientWidth - contentWidth) / 2,
+          y: mouseY - contentPoint.y * newScale,
+        });
+      } else {
+        // Zoom towards/away from mouse in all directions
+        newPosition = limitPosition({
           x: mouseX - contentPoint.x * newScale,
           y: mouseY - contentPoint.y * newScale,
         });
-
-        setPosition(newPosition);
-      } else {
-        centerContent(newScale);
       }
 
+      setPosition(newPosition);
       setScale(newScale, false);
     } else {
-      const scrollAmount = 30; // Adjust this value to change scroll speed
+      // Scrolling behavior
       let deltaX = e.deltaX;
       let deltaY = e.deltaY;
 
-      if (scale > 0.7) {
-        // Allow both horizontal and vertical scrolling
-        setPosition(prevPosition => limitPosition({
-          x: prevPosition.x - deltaX / scale,
-          y: prevPosition.y - deltaY / scale,
-        }));
-      } else {
-        // Only allow vertical scrolling
-        setPosition(prevPosition => limitPosition({
-          x: prevPosition.x,
-          y: prevPosition.y - deltaY / scale,
-        }));
-      }
+      setPosition(prevPosition => {
+        if (scale > 0.7) {
+          // Allow both horizontal and vertical scrolling
+          return limitPosition({
+            x: prevPosition.x - deltaX / scale,
+            y: prevPosition.y - deltaY / scale,
+          });
+        } else {
+          // Only allow vertical scrolling
+          return limitPosition({
+            x: prevPosition.x,
+            y: prevPosition.y - deltaY / scale,
+          });
+        }
+      });
     }
   }, [scale, setScale, position, limitPosition]);
+
+  useEffect(() => {
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [handleMouseMove, handleMouseUp]);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -144,7 +155,7 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
         wrapper.removeEventListener('wheel', handleWheel);
       };
     }
-  }, [scale, position, setScale]);
+  }, [handleWheel]);
 
   return (
     <div 
@@ -154,7 +165,9 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
         height: '100%', 
         overflow: 'hidden',
         position: 'relative' as const,
-        cursor: scale > 0.7 ? 'move' : 'default',
+        cursor: isHandModeActive ? (isDragging ? 'grabbing' : 'grab') : 'default',
+        backgroundColor: '#EBECF0',
+        userSelect: isHandModeActive ? 'none' : 'auto',
       }}
       onMouseDown={handleMouseDown}
     >
@@ -164,7 +177,7 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
           transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
           transformOrigin: '0 0',
           position: 'absolute' as const,
-          transition: isDragging ? 'none' : 'transform 0.05s ease-out',
+          transition: isDragging ? 'none' : 'transform 0.03s ease-out',
         }}
       >
         {children}

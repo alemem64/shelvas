@@ -2,10 +2,12 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import TopNav from '@/components/TopNav'
-import Sidebar from '@/components/Sidebar'
+import Sidebar from '@/components/Sidebar/Sidebar'
 import Toolbar from '@/components/Toolbar'
 import { ZoomProvider } from '../context/ZoomContext';
+import { HandModeProvider } from '../context/HandModeContext';
 import ZoomWrapper from '@/components/ZoomWrapper';
+import SidebarShadow from '@/components/Sidebar/SidebarShadow';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,20 +28,25 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ZoomProvider>
-          <div className="flex flex-col h-screen">
-            <TopNav />
-            <div className="flex flex-1 overflow-hidden">
-              <Sidebar />
-              <div className="flex-1 flex flex-col overflow-hidden relative">
-                <Toolbar />
-                <ZoomWrapper>
-                  <main className="flex-1 overflow-auto bg-[#EBECF0]">
-                    {children}
-                  </main>
-                </ZoomWrapper>
+          <HandModeProvider>
+            <div className="flex flex-col h-screen">
+              <TopNav />
+              <div className="flex flex-1 overflow-hidden">
+                <Sidebar />
+                <div className="flex-1 flex flex-col overflow-hidden relative">
+                  <Toolbar />
+                  <ZoomWrapper>
+                    <main className="flex-1 overflow-auto bg-[#EBECF0]">
+                      {children}
+                    </main>
+                  </ZoomWrapper>
+                  <div className="absolute left-0 top-0 h-full w-3 z-50 pointer-events-none">
+                    <SidebarShadow />
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </HandModeProvider>
         </ZoomProvider>
       </body>
     </html>
