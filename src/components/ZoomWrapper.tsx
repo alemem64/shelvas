@@ -94,23 +94,24 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
       }
 
       setScale(newScale, false);
-    } else if (scale > 0.7) {
+    } else {
       const scrollAmount = 30; // Adjust this value to change scroll speed
-      let deltaX = 0;
-      let deltaY = 0;
+      let deltaX = e.deltaX;
+      let deltaY = e.deltaY;
 
-      if (e.shiftKey || e.deltaX !== 0) {
-        // Horizontal scrolling
-        deltaX = e.deltaX !== 0 ? e.deltaX : e.deltaY;
+      if (scale > 0.7) {
+        // Allow both horizontal and vertical scrolling
+        setPosition(prevPosition => ({
+          x: prevPosition.x - deltaX / scale,
+          y: prevPosition.y - deltaY / scale,
+        }));
       } else {
-        // Vertical scrolling
-        deltaY = e.deltaY;
+        // Only allow vertical scrolling
+        setPosition(prevPosition => ({
+          x: prevPosition.x,
+          y: prevPosition.y - deltaY,
+        }));
       }
-
-      setPosition(prevPosition => ({
-        x: prevPosition.x - deltaX / scale,
-        y: prevPosition.y - deltaY / scale,
-      }));
     }
   }, [scale, setScale, position]);
 
@@ -133,7 +134,6 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
         overflow: 'hidden',
         position: 'relative' as const,
         cursor: scale > 0.7 ? 'move' : 'default',
-        backgroundColor: '#EBECF0', // 배경색 추가
       }}
       onMouseDown={handleMouseDown}
     >
