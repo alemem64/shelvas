@@ -99,7 +99,12 @@ const TopNav = () => {
       <div className="flex-grow flex justify-center">
         <div className="flex items-center space-x-3">
           <div className="flex space-x-1">
-            <ToolButton icon="pointer" selectedTool={selectedTool} onClick={() => handleToolClick('pointer')} />
+            <ToolButton 
+              icon="pointer" 
+              selectedTool={selectedTool} 
+              isActive={selectedTool === 'pointer'}
+              onClick={() => handleToolClick('pointer')} 
+            />
             <ToolButton 
               icon="hand" 
               selectedTool={selectedTool}
@@ -119,7 +124,12 @@ const TopNav = () => {
             <ToolButton icon="redo" selectedTool={selectedTool} onClick={() => handleToolClick('redo')} />
           </div>
           <Divider />
-          <ToolButton icon="chat" selectedTool={selectedTool} onClick={() => handleToolClick('chat')} />
+          <ToolButton 
+            icon="chat" 
+            selectedTool={selectedTool} 
+            isActive={selectedTool === 'chat'}
+            onClick={() => handleToolClick('chat')} 
+          />
         </div>
       </div>
       <div className="flex-shrink-0 flex items-center space-x-3">
