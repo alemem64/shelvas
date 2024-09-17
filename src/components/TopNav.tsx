@@ -112,16 +112,56 @@ const TopNav = () => {
               onClick={() => handleToolClick('hand')}
             />
             <Divider />
-            <ToolButton icon="text" selectedTool={selectedTool} onClick={() => handleToolClick('text')} />
-            <ToolButton icon="formula" selectedTool={selectedTool} onClick={() => handleToolClick('formula')} />
-            <ToolButton icon="table" selectedTool={selectedTool} onClick={() => handleToolClick('table')} />
+            <ToolButton 
+              icon="text" 
+              selectedTool={selectedTool} 
+              isActive={selectedTool === 'text'}
+              onClick={() => handleToolClick('text')} 
+            />
+            <ToolButton 
+              icon="formula" 
+              selectedTool={selectedTool} 
+              isActive={selectedTool === 'formula'}
+              onClick={() => handleToolClick('formula')} 
+            />
+            <ToolButton 
+              icon="table" 
+              selectedTool={selectedTool} 
+              isActive={selectedTool === 'table'}
+              onClick={() => handleToolClick('table')} 
+            />
             <Divider />
-            <ToolButton icon="image" selectedTool={selectedTool} onClick={() => handleToolClick('image')} />
-            <ToolButton icon="shape" selectedTool={selectedTool} onClick={() => handleToolClick('shape')} />
-            <ToolButton icon="pen" selectedTool={selectedTool} onClick={() => handleToolClick('pen')} />
+            <ToolButton 
+              icon="image" 
+              selectedTool={selectedTool} 
+              isActive={selectedTool === 'image'}
+              onClick={() => handleToolClick('image')} 
+            />
+            <ToolButton 
+              icon="shape" 
+              selectedTool={selectedTool} 
+              isActive={selectedTool === 'shape'}
+              onClick={() => handleToolClick('shape')} 
+            />
+            <ToolButton 
+              icon="pen" 
+              selectedTool={selectedTool} 
+              isActive={selectedTool === 'pen'}
+              onClick={() => handleToolClick('pen')} 
+            />
             <Divider />
-            <ToolButton icon="undo" selectedTool={selectedTool} onClick={() => handleToolClick('undo')} />
-            <ToolButton icon="redo" selectedTool={selectedTool} onClick={() => handleToolClick('redo')} />
+            <ToolButton 
+              icon="undo" 
+              selectedTool={selectedTool} 
+              isActive={selectedTool === 'undo'}
+              onClick={() => handleToolClick('undo')} 
+            />
+            <ToolButton 
+              icon="redo" 
+              selectedTool={selectedTool} 
+              isActive={selectedTool === 'redo'}
+              onClick={() => handleToolClick('redo')} 
+            />
           </div>
           <Divider />
           <ToolButton 
