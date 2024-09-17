@@ -6,7 +6,7 @@ const Toolbar = () => {
   const { 
     isWhiteBar, 
     setIsWhiteBar, 
-    whitePage, 
+    // whitePage, // Remove this line
     setWhitePage, 
     lastClickedButton, 
     setLastClickedButton,

@@ -8,7 +8,7 @@ interface ZoomWrapperProps {
 }
 
 const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
-  const { scale, setScale, isKeyboardInput } = useZoom();
+  const { scale, setScale } = useZoom(); // Remove isKeyboardInput
   const { isHandMode, isSpacePressed } = useHandMode();
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -117,8 +117,8 @@ const ZoomWrapper: React.FC<ZoomWrapperProps> = ({ children }) => {
       setScale(newScale, false);
     } else {
       // Scrolling behavior
-      let deltaX = e.deltaX;
-      let deltaY = e.deltaY;
+      const deltaX = e.deltaX; // Change let to const
+      const deltaY = e.deltaY; // Change let to const
 
       setPosition(prevPosition => {
         if (scale > 0.7) {

@@ -33,4 +33,5 @@ export const useZoom = () => {
   return context;
 };
 
-export default { ZoomProvider, useZoom };
+const ZoomContextExport = { ZoomProvider, useZoom };
+export default ZoomContextExport;
