@@ -223,7 +223,17 @@ const TopNav = () => {
   );
 };
 
-const ToolButton = ({ icon, selectedTool, isActive, onClick }) => (
+const ToolButton = ({ 
+  icon, 
+  selectedTool, 
+  isActive, 
+  onClick 
+}: {
+  icon: string;
+  selectedTool: string;
+  isActive: boolean;
+  onClick: () => void;
+}) => (
   <button 
     className={`p-1 rounded ${
       isActive || selectedTool === icon ? 'bg-[#3579FF]' : 'hover:bg-gray-700'
@@ -234,7 +244,7 @@ const ToolButton = ({ icon, selectedTool, isActive, onClick }) => (
   </button>
 );
 
-const getToolIcon = (icon) => {
+const getToolIcon = (icon: string) => {
   switch (icon) {
     case 'pointer':
       return <LuMousePointer2 className="w-5 h-5" />;
