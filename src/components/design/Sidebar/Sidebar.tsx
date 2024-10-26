@@ -6,7 +6,7 @@ import { FaRegBookmark } from "react-icons/fa";
 import { LuShapes, LuHash } from "react-icons/lu";
 import { BsInboxes } from "react-icons/bs";
 import { FiLayers, FiUploadCloud } from "react-icons/fi";
-import { useToolbar } from '../../context/ToolbarContext';
+import { useToolbar } from '../context/ToolbarContext';
 
 // 모든 페이지 컴포넌트를 미리 임포트
 import Design from './DarkPages/Design';

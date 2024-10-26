@@ -1,7 +1,7 @@
 'use client'
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { useZoom } from '@/context/ZoomContext';
-import { useHandMode } from '@/context/HandModeContext';
+import { useZoom } from '@/components/design/context/ZoomContext';
+import { useHandMode } from '@/components/design/context/HandModeContext';
 
 interface ZoomWrapperProps {
   children: React.ReactNode;

@@ -1,12 +1,12 @@
-import TopNav from '@/components/TopNav'
-import Sidebar from '@/components/Sidebar/Sidebar'
-import Toolbar from '@/components/Toolbar'
-import { ZoomProvider } from '../../context/ZoomContext'
-import { HandModeProvider } from '../../context/HandModeContext'
-import { ToolbarProvider } from '../../context/ToolbarContext'
-import ZoomWrapper from '@/components/ZoomWrapper'
-import SidebarShadow from '@/components/Sidebar/SidebarShadow'
-import ZoomWrapperShadow from '@/components/ZoomWrapperShadow'
+import TopNav from '@/components/design/TopNav'
+import Sidebar from '@/components/design/Sidebar/Sidebar'
+import Toolbar from '@/components/design/Toolbar'
+import { ZoomProvider } from '../../components/design/context/ZoomContext'
+import { HandModeProvider } from '../../components/design/context/HandModeContext'
+import { ToolbarProvider } from '../../components/design/context/ToolbarContext'
+import ZoomWrapper from '@/components/design/ZoomWrapper'
+import SidebarShadow from '@/components/design/Sidebar/SidebarShadow'
+import ZoomWrapperShadow from '@/components/design/ZoomWrapperShadow'
 
 export default function DesignLayout({
   children,

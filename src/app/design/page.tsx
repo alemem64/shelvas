@@ -1,4 +1,4 @@
-import PageHeader from '@/components/PageHeader';
+import PageHeader from '@/components/design/PageHeader';
 
 const PAGE_WIDTH = 108; // mm
 const PAGE_HEIGHT = 175; // mm

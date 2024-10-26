@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useRef, useEffect } from 'react';
-import { useZoom } from '@/context/ZoomContext';
+import { useZoom } from '@/components/design/context/ZoomContext';
 import { LuMousePointer2, LuImage, LuUndo2, LuRedo2 } from 'react-icons/lu';
 import { RxHand } from 'react-icons/rx';
 import { PiTextTBold, PiChatTeardropBold } from 'react-icons/pi';
@@ -11,7 +11,7 @@ import { IoPerson } from 'react-icons/io5';
 import { FiChevronDown } from 'react-icons/fi';
 import { BsGrid } from 'react-icons/bs';
 import { LiaPenNibSolid } from 'react-icons/lia';
-import { useHandMode } from '@/context/HandModeContext';
+import { useHandMode } from '@/components/design/context/HandModeContext';
 
 const TopNav = () => {
   const [selectedTool, setSelectedTool] = useState('pointer');
