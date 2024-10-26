@@ -99,6 +99,7 @@ const TopNav = () => {
       <div className="flex-grow flex justify-center">
         <div className="flex items-center space-x-3">
           <div className="flex space-x-1">
+            <Divider />
             <ToolButton 
               icon="pointer" 
               selectedTool={selectedTool} 
@@ -162,14 +163,15 @@ const TopNav = () => {
               isActive={selectedTool === 'redo'}
               onClick={() => handleToolClick('redo')} 
             />
+            <Divider />
+            <ToolButton 
+              icon="chat" 
+              selectedTool={selectedTool} 
+              isActive={selectedTool === 'chat'}
+              onClick={() => handleToolClick('chat')} 
+            />
+            <Divider />
           </div>
-          <Divider />
-          <ToolButton 
-            icon="chat" 
-            selectedTool={selectedTool} 
-            isActive={selectedTool === 'chat'}
-            onClick={() => handleToolClick('chat')} 
-          />
         </div>
       </div>
       <div className="flex-shrink-0 flex items-center space-x-3">
