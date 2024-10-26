@@ -30,9 +30,9 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="flex flex-col h-screen bg-white text-black">
+    <div className="flex flex-col min-h-screen bg-white text-black">
       <TopNav isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 pt-16"> {/* TopNav 높이만큼 상단 패딩 추가 */}
         <Sidebar isOpen={isMenuOpen} />
         <main className={`flex-1 overflow-auto transition-all duration-300 ${isMenuOpen ? 'ml-64' : ''}`}>
           <div className="p-6">
