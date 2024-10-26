@@ -12,7 +12,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   return (
     <aside 
       className={`
-        fixed top-16 left-0 h-full w-64 bg-white shadow-lg 
+        fixed top-16 left-0 h-full w-64 bg-white shadow-[0_0_10px_rgba(0,0,0,0.1)]
         transform transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}

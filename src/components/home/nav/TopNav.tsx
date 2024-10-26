@@ -11,8 +11,8 @@ interface TopNavProps {
 
 export default function TopNav({ isMenuOpen, toggleMenu }: TopNavProps) {
   return (
-    <div className="h-16 border-b flex items-center px-4">
-      <div className="flex items-center gap-4 w-1/4">
+    <div className="h-16 border-b flex items-center px-4 bg-white shadow-md fixed top-0 left-0 right-0 z-50">
+      <div className="flex items-center gap-4 w-1/3">
         <button 
           className="p-2 hover:bg-gray-100 rounded-lg"
           onClick={toggleMenu}
@@ -29,9 +29,9 @@ export default function TopNav({ isMenuOpen, toggleMenu }: TopNavProps) {
           <input
             type="search"
             placeholder="Search"
-            className="w-full px-4 py-2 rounded-l-lg border-l border-y bg-gray-50 focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-1.5 rounded-l-full border-l border-y bg-gray-50 focus:outline-none focus:border-blue-500"
           />
-          <button className="bg-gray-100 border-r border-y px-4 py-2 rounded-r-lg hover:bg-gray-200">
+          <button className="bg-gray-100 border-r border-y px-4 py-2 rounded-r-full hover:bg-gray-200">
             <FiSearch size={20} />
           </button>
         </div>
