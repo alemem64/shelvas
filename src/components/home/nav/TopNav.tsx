@@ -1,41 +1,56 @@
 'use client'
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { FiMenu, FiShoppingCart, FiBell } from 'react-icons/fi'
+import { FiMenu, FiX, FiShoppingCart, FiBell, FiSearch, FiPlus } from 'react-icons/fi'
 
-export default function TopNav() {
+interface TopNavProps {
+  isMenuOpen: boolean;
+  toggleMenu: () => void;
+}
+
+export default function TopNav({ isMenuOpen, toggleMenu }: TopNavProps) {
   return (
-    <div className="h-16 border-b flex items-center px-4 justify-between">
-      <div className="flex items-center gap-4">
-        <button className="p-2 hover:bg-gray-100 rounded-lg">
-          <FiMenu size={24} />
+    <div className="h-16 border-b flex items-center px-4">
+      <div className="flex items-center gap-4 w-1/4">
+        <button 
+          className="p-2 hover:bg-gray-100 rounded-lg"
+          onClick={toggleMenu}
+        >
+          {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
         </button>
         <Link href="/">
           <Image src="/logo.svg" alt="Shelvas" width={120} height={32} />
         </Link>
       </div>
       
-      <div className="flex-1 max-w-2xl mx-4">
-        <div className="relative">
+      <div className="flex-1 flex justify-center items-center">
+        <div className="relative w-full max-w-2xl flex items-center">
           <input
             type="search"
             placeholder="Search"
-            className="w-full px-4 py-2 rounded-lg border bg-gray-50 focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-2 rounded-l-lg border-l border-y bg-gray-50 focus:outline-none focus:border-blue-500"
           />
+          <button className="bg-gray-100 border-r border-y px-4 py-2 rounded-r-lg hover:bg-gray-200">
+            <FiSearch size={20} />
+          </button>
+        </div>
+        <div className="flex items-center ml-4">
+          <button className="p-2 hover:bg-gray-100 rounded-lg">
+            <FiShoppingCart size={24} />
+          </button>
+          <button className="p-2 hover:bg-gray-100 rounded-lg">
+            <FiBell size={24} />
+          </button>
         </div>
       </div>
       
-      <div className="flex items-center gap-4">
-        <button className="p-2 hover:bg-gray-100 rounded-lg">
-          <FiShoppingCart size={24} />
+      <div className="flex items-center gap-2 w-1/4 justify-end">
+        <button className="bg-blue-500 text-white px-2 py-2 rounded-lg hover:bg-blue-600 flex items-center whitespace-nowrap transition-all duration-300 ease-in-out">
+          <FiPlus size={20} className="mr-1" />
+          <span className="hidden sm:inline overflow-hidden max-w-0 sm:max-w-[100px] transition-all duration-300 ease-in-out">New book</span>
         </button>
-        <button className="p-2 hover:bg-gray-100 rounded-lg">
-          <FiBell size={24} />
-        </button>
-        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-          + New book
-        </button>
-        <button className="w-10 h-10 rounded-full overflow-hidden">
+        <button className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
           <Image src="/profile.jpg" alt="Profile" width={40} height={40} />
         </button>
       </div>
